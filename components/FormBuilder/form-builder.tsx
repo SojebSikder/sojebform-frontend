@@ -36,7 +36,6 @@ import {
 import { Label } from "@/components/FormBuilder/ui/label";
 import { Input } from "@/components/FormBuilder/ui/input";
 import { Textarea } from "@/components/FormBuilder/ui/textarea";
-import { createForm } from "@/lib/api";
 import { FormService } from "@/service/admin/form/form.service";
 
 export function FormBuilder() {
@@ -95,7 +94,7 @@ export function FormBuilder() {
       const newElement: FormElementInstance = {
         id: nanoid(),
         type: activeData.element.type,
-        extraAttributes: activeData.element.construct(),
+        extra_attributes: activeData.element.construct(),
       };
 
       setElements((prev) => [...prev, newElement]);
@@ -111,8 +110,8 @@ export function FormBuilder() {
         if (element.id === id) {
           return {
             ...element,
-            extraAttributes: {
-              ...element.extraAttributes,
+            extra_attributes: {
+              ...element.extra_attributes,
               ...attributes,
             },
           };
@@ -127,8 +126,8 @@ export function FormBuilder() {
         if (!prev) return null;
         return {
           ...prev,
-          extraAttributes: {
-            ...prev.extraAttributes,
+          extra_attributes: {
+            ...prev.extra_attributes,
             ...attributes,
           },
         };

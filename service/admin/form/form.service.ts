@@ -75,6 +75,20 @@ export const FormService = {
     return await Fetch.patch(`/admin/form/${id}`, formData, _config);
   },
 
+  toggleStatus: async (id: string): Promise<any> => {
+    const userToken = CookieHelper.get({ key: "token" });
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+    const data = {};
+
+    return await Fetch.patch(`/admin/form/${id}/status`, data, _config);
+  },
+
   delete: async (id: string): Promise<ApiResponseStatus> => {
     const userToken = CookieHelper.get({ key: "token" });
 

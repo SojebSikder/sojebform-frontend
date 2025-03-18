@@ -1,16 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getForms, deleteForm, togglePublishForm, FormData } from "@/lib/api";
+// import { getForms, deleteForm, togglePublishForm } from "@/lib/api";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/FormBuilder/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/FormBuilder/ui/card";
 
 import { useToast } from "@/hooks/use-toast";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/FormBuilder/ui/alert-dialog";
-import { EyeIcon, PencilIcon, TrashIcon, FileIcon, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/FormBuilder/ui/alert-dialog";
+import {
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  FileIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/FormBuilder/ui/button";
 import { Badge } from "@/components/FormBuilder/ui/badge";
+import { FormService, FormData } from "@/service/admin/form/form.service";
 
 export default function FormsPage() {
   const [forms, setForms] = useState<FormData[]>([]);
@@ -26,8 +50,12 @@ export default function FormsPage() {
   async function loadForms() {
     try {
       setLoading(true);
-      const data = await getForms();
-      setForms(data);
+      // const data = await getForms();
+      const form_data = await FormService.findAll();
+
+      if (form_data.success) {
+        setForms(form_data.data);
+      }
     } catch (error) {
       console.error("Error loading forms:", error);
       toast({
@@ -42,12 +70,15 @@ export default function FormsPage() {
 
   async function handleDeleteForm(id: string) {
     try {
-      await deleteForm(id);
-      setForms(forms.filter(form => form.id !== id));
-      toast({
-        title: "Form deleted",
-        description: "The form has been deleted successfully.",
-      });
+      // await deleteForm(id);
+      const form = await FormService.delete(id);
+      if (form.success) {
+        setForms(forms.filter((form) => form.id !== id));
+        toast({
+          title: "Form deleted",
+          description: "The form has been deleted successfully.",
+        });
+      }
     } catch (error) {
       console.error("Error deleting form:", error);
       toast({
@@ -63,14 +94,16 @@ export default function FormsPage() {
 
   async function handleTogglePublish(id: string) {
     try {
-      const updatedForm = await togglePublishForm(id);
-      setForms(forms.map(form => form.id === id ? updatedForm : form));
-      toast({
-        title: updatedForm.published ? "Form published" : "Form unpublished",
-        description: updatedForm.published 
-          ? "The form is now available for submissions." 
-          : "The form is no longer accepting submissions.",
-      });
+      const updatedForm = await FormService.toggleStatus(id);
+      if (updatedForm.success) {
+        setForms(forms.map((form) => (form.id === id ? updatedForm : form)));
+        toast({
+          title: updatedForm.status ? "Form published" : "Form unpublished",
+          description: updatedForm.status
+            ? "The form is now available for submissions."
+            : "The form is no longer accepting submissions.",
+        });
+      }
     } catch (error) {
       console.error("Error toggling form publish status:", error);
       toast({
@@ -101,7 +134,7 @@ export default function FormsPage() {
     <div className="container mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Your Forms</h1>
-        <Link href="/">
+        <Link href="/admin/form/create">
           <Button>Create New Form</Button>
         </Link>
       </div>
@@ -110,8 +143,10 @@ export default function FormsPage() {
         <div className="flex flex-col items-center justify-center h-64 bg-muted/30 rounded-lg border border-dashed">
           <FileIcon className="h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-xl font-medium mb-2">No forms yet</h3>
-          <p className="text-muted-foreground mb-4">Create your first form to get started</p>
-          <Link href="/form/create">
+          <p className="text-muted-foreground mb-4">
+            Create your first form to get started
+          </p>
+          <Link href="/admin/form/create">
             <Button>Create Form</Button>
           </Link>
         </div>
@@ -122,8 +157,8 @@ export default function FormsPage() {
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <CardTitle className="truncate">{form.name}</CardTitle>
-                  <Badge variant={form.published ? "default" : "outline"}>
-                    {form.published ? "Published" : "Draft"}
+                  <Badge variant={form.status ? "default" : "outline"}>
+                    {form.status ? "Published" : "Draft"}
                   </Badge>
                 </div>
                 <CardDescription className="line-clamp-2">
@@ -132,10 +167,11 @@ export default function FormsPage() {
               </CardHeader>
               <CardContent className="pb-2">
                 <p className="text-sm text-muted-foreground">
-                  {form.elements.length} {form.elements.length === 1 ? "element" : "elements"}
+                  {form.elements.length}{" "}
+                  {form.elements.length === 1 ? "element" : "elements"}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Created: {new Date(form.createdAt!).toLocaleDateString()}
+                  Created: {new Date(form.created_at!).toLocaleDateString()}
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between pt-2">
@@ -146,7 +182,7 @@ export default function FormsPage() {
                       Edit
                     </Link>
                   </Button>
-                  {form.published && (
+                  {form.status && (
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/forms/${form.id}/view`}>
                         <EyeIcon className="h-4 w-4 mr-1" />
@@ -156,12 +192,12 @@ export default function FormsPage() {
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => handleTogglePublish(form.id!)}
                   >
-                    {form.published ? (
+                    {form.status ? (
                       <>
                         <XCircleIcon className="h-4 w-4 mr-1" />
                         Unpublish
@@ -173,8 +209,8 @@ export default function FormsPage() {
                       </>
                     )}
                   </Button>
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     size="sm"
                     onClick={() => confirmDelete(form.id!)}
                   >
@@ -192,12 +228,13 @@ export default function FormsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the form and all its submissions.
+              This action cannot be undone. This will permanently delete the
+              form and all its submissions.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={() => formToDelete && handleDeleteForm(formToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >

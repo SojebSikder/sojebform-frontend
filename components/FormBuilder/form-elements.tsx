@@ -1,35 +1,52 @@
 "use client";
 
-import { 
-  TextIcon, 
-  TypeIcon, 
-  CheckSquareIcon, 
-  ListIcon, 
-  ToggleLeftIcon, 
-  CalendarIcon, 
+import {
+  TextIcon,
+  TypeIcon,
+  CheckSquareIcon,
+  ListIcon,
+  ToggleLeftIcon,
+  CalendarIcon,
   FileTextIcon,
-  SlidersIcon
+  SlidersIcon,
 } from "lucide-react";
 import { Label } from "@/components/FormBuilder/ui/label";
 import { Input } from "@/components/FormBuilder/ui/input";
 import { Textarea } from "@/components/FormBuilder/ui/textarea";
 import { Checkbox } from "@/components/FormBuilder/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/FormBuilder/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/FormBuilder/ui/select";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/FormBuilder/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/FormBuilder/ui/select";
 import { Switch } from "@/components/FormBuilder/ui/switch";
 import { Slider } from "@/components/FormBuilder/ui/slider";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/FormBuilder/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/FormBuilder/ui/form";
 import { Button } from "@/components/FormBuilder/ui/button";
 
 // Base types
 export type FormElementInstance = {
   id: string;
   type: string;
-  extraAttributes?: Record<string, any>;
+  extra_attributes?: Record<string, any>;
 };
 
 export type FormElement = {
@@ -52,14 +69,15 @@ const TextFieldFormElement: FormElement = {
   construct: () => ({
     label: "Text Field",
     placeholder: "Enter text here",
-    helperText: "",
+    helper_text: "",
     required: false,
   }),
   label: "Text Field",
   icon: TextIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, placeholder, helperText, required } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <Label>
@@ -67,38 +85,39 @@ const TextFieldFormElement: FormElement = {
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
         <Input placeholder={placeholder} />
-        {helperText && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, placeholder, helperText, required } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
       placeholder: z.string().optional(),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       required: z.boolean().default(false),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Text Field",
         placeholder: placeholder || "",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         required: required || false,
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -115,7 +134,7 @@ const TextFieldFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="placeholder"
@@ -129,10 +148,10 @@ const TextFieldFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -143,25 +162,29 @@ const TextFieldFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="required"
             render={({ field }) => (
               <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <Checkbox 
-                    checked={field.value} 
-                    onCheckedChange={field.onChange} 
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal">Required field</FormLabel>
+                <FormLabel className="text-sm font-normal">
+                  Required field
+                </FormLabel>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -174,15 +197,16 @@ const TextareaFormElement: FormElement = {
   construct: () => ({
     label: "Textarea",
     placeholder: "Enter text here",
-    helperText: "",
+    helper_text: "",
     required: false,
     rows: 3,
   }),
   label: "Textarea",
   icon: FileTextIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, placeholder, helperText, required, rows } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required, rows } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <Label>
@@ -190,40 +214,41 @@ const TextareaFormElement: FormElement = {
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
         <Textarea placeholder={placeholder} rows={rows || 3} />
-        {helperText && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, placeholder, helperText, required, rows } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required, rows } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
       placeholder: z.string().optional(),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       required: z.boolean().default(false),
       rows: z.coerce.number().min(1).max(20).default(3),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Textarea",
         placeholder: placeholder || "",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         required: required || false,
         rows: rows || 3,
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -240,7 +265,7 @@ const TextareaFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="placeholder"
@@ -254,10 +279,10 @@ const TextareaFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -268,7 +293,7 @@ const TextareaFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="rows"
@@ -282,25 +307,29 @@ const TextareaFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="required"
             render={({ field }) => (
               <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <Checkbox 
-                    checked={field.value} 
-                    onCheckedChange={field.onChange} 
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal">Required field</FormLabel>
+                <FormLabel className="text-sm font-normal">
+                  Required field
+                </FormLabel>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -312,50 +341,55 @@ const CheckboxFormElement: FormElement = {
   type: "Checkbox",
   construct: () => ({
     label: "Checkbox",
-    helperText: "",
+    helper_text: "",
     defaultChecked: false,
   }),
   label: "Checkbox",
   icon: CheckSquareIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, helperText, defaultChecked } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, defaultChecked } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Checkbox id={`checkbox-${elementInstance.id}`} defaultChecked={defaultChecked} />
+          <Checkbox
+            id={`checkbox-${elementInstance.id}`}
+            defaultChecked={defaultChecked}
+          />
           <Label htmlFor={`checkbox-${elementInstance.id}`}>{label}</Label>
         </div>
-        {helperText && (
-          <p className="text-sm text-muted-foreground ml-6">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground ml-6">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, helperText, defaultChecked } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, defaultChecked } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       defaultChecked: z.boolean().default(false),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Checkbox",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         defaultChecked: defaultChecked || false,
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -372,10 +406,10 @@ const CheckboxFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -386,25 +420,29 @@ const CheckboxFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="defaultChecked"
             render={({ field }) => (
               <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <Checkbox 
-                    checked={field.value} 
-                    onCheckedChange={field.onChange} 
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal">Default checked</FormLabel>
+                <FormLabel className="text-sm font-normal">
+                  Default checked
+                </FormLabel>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -417,7 +455,7 @@ const SelectFormElement: FormElement = {
   construct: () => ({
     label: "Select",
     placeholder: "Select an option",
-    helperText: "",
+    helper_text: "",
     required: false,
     options: [
       { label: "Option 1", value: "option1" },
@@ -427,8 +465,9 @@ const SelectFormElement: FormElement = {
   label: "Select",
   icon: ListIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, placeholder, helperText, required, options } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required, options } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <Label>
@@ -447,36 +486,39 @@ const SelectFormElement: FormElement = {
             ))}
           </SelectContent>
         </Select>
-        {helperText && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, placeholder, helperText, required, options } = elementInstance.extraAttributes || {};
-    
+    const { label, placeholder, helper_text, required, options } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
       placeholder: z.string().optional(),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       required: z.boolean().default(false),
-      options: z.array(
-        z.object({
-          label: z.string().min(1, "Option label is required"),
-          value: z.string().min(1, "Option value is required"),
-        })
-      ).min(1, "At least one option is required"),
+      options: z
+        .array(
+          z.object({
+            label: z.string().min(1, "Option label is required"),
+            value: z.string().min(1, "Option value is required"),
+          })
+        )
+        .min(1, "At least one option is required"),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Select",
         placeholder: placeholder || "Select an option",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         required: required || false,
         options: options || [
           { label: "Option 1", value: "option1" },
@@ -484,13 +526,13 @@ const SelectFormElement: FormElement = {
         ],
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     const { fields, append, remove } = form.control._formValues.options;
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -507,7 +549,7 @@ const SelectFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="placeholder"
@@ -521,10 +563,10 @@ const SelectFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -535,7 +577,7 @@ const SelectFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <div>
             <FormLabel>Options</FormLabel>
             <div className="space-y-2 mt-2">
@@ -564,7 +606,7 @@ const SelectFormElement: FormElement = {
                   </Button>
                 </div>
               ))}
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -587,25 +629,29 @@ const SelectFormElement: FormElement = {
               </p>
             )}
           </div>
-          
+
           <FormField
             control={form.control}
             name="required"
             render={({ field }) => (
               <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <Checkbox 
-                    checked={field.value} 
-                    onCheckedChange={field.onChange} 
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal">Required field</FormLabel>
+                <FormLabel className="text-sm font-normal">
+                  Required field
+                </FormLabel>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -617,50 +663,55 @@ const SwitchFormElement: FormElement = {
   type: "Switch",
   construct: () => ({
     label: "Switch",
-    helperText: "",
+    helper_text: "",
     defaultChecked: false,
   }),
   label: "Switch",
   icon: ToggleLeftIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, helperText, defaultChecked } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, defaultChecked } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Switch id={`switch-${elementInstance.id}`} defaultChecked={defaultChecked} />
+          <Switch
+            id={`switch-${elementInstance.id}`}
+            defaultChecked={defaultChecked}
+          />
           <Label htmlFor={`switch-${elementInstance.id}`}>{label}</Label>
         </div>
-        {helperText && (
-          <p className="text-sm text-muted-foreground ml-6">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground ml-6">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, helperText, defaultChecked } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, defaultChecked } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       defaultChecked: z.boolean().default(false),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Switch",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         defaultChecked: defaultChecked || false,
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -677,10 +728,10 @@ const SwitchFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -691,25 +742,29 @@ const SwitchFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="defaultChecked"
             render={({ field }) => (
               <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <Checkbox 
-                    checked={field.value} 
-                    onCheckedChange={field.onChange} 
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal">Default checked</FormLabel>
+                <FormLabel className="text-sm font-normal">
+                  Default checked
+                </FormLabel>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -721,7 +776,7 @@ const SliderFormElement: FormElement = {
   type: "Slider",
   construct: () => ({
     label: "Slider",
-    helperText: "",
+    helper_text: "",
     min: 0,
     max: 100,
     step: 1,
@@ -730,8 +785,9 @@ const SliderFormElement: FormElement = {
   label: "Slider",
   icon: SlidersIcon,
   formComponent: ({ elementInstance }) => {
-    const { label, helperText, min, max, step, defaultValue } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, min, max, step, defaultValue } =
+      elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-2">
         <Label>{label}</Label>
@@ -742,42 +798,43 @@ const SliderFormElement: FormElement = {
           step={step || 1}
           className="py-2"
         />
-        {helperText && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
+        {helper_text && (
+          <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}
       </div>
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { label, helperText, min, max, step, defaultValue } = elementInstance.extraAttributes || {};
-    
+    const { label, helper_text, min, max, step, defaultValue } =
+      elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       label: z.string().min(1, "Label is required"),
-      helperText: z.string().optional(),
+      helper_text: z.string().optional(),
       min: z.coerce.number().default(0),
       max: z.coerce.number().default(100),
       step: z.coerce.number().default(1),
       defaultValue: z.coerce.number().default(50),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         label: label || "Slider",
-        helperText: helperText || "",
+        helper_text: helper_text || "",
         min: min ?? 0,
         max: max ?? 100,
         step: step ?? 1,
         defaultValue: defaultValue ?? 50,
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -794,10 +851,10 @@ const SliderFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="helperText"
+            name="helper_text"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Helper Text</FormLabel>
@@ -808,7 +865,7 @@ const SliderFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <div className="grid grid-cols-2 gap-2">
             <FormField
               control={form.control}
@@ -823,7 +880,7 @@ const SliderFormElement: FormElement = {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="max"
@@ -838,7 +895,7 @@ const SliderFormElement: FormElement = {
               )}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
             <FormField
               control={form.control}
@@ -853,7 +910,7 @@ const SliderFormElement: FormElement = {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="defaultValue"
@@ -868,8 +925,10 @@ const SliderFormElement: FormElement = {
               )}
             />
           </div>
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );
@@ -886,8 +945,8 @@ const TitleFormElement: FormElement = {
   label: "Title",
   icon: TypeIcon,
   formComponent: ({ elementInstance }) => {
-    const { title, subtitle } = elementInstance.extraAttributes || {};
-    
+    const { title, subtitle } = elementInstance.extra_attributes || {};
+
     return (
       <div className="space-y-1">
         <h2 className="text-2xl font-bold">{title}</h2>
@@ -896,15 +955,15 @@ const TitleFormElement: FormElement = {
     );
   },
   propertiesComponent: ({ elementInstance, updateElement }) => {
-    const { title, subtitle } = elementInstance.extraAttributes || {};
-    
+    const { title, subtitle } = elementInstance.extra_attributes || {};
+
     const formSchema = z.object({
       title: z.string().min(1, "Title is required"),
       subtitle: z.string().optional(),
     });
-    
+
     type FormSchemaType = z.infer<typeof formSchema>;
-    
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -912,11 +971,11 @@ const TitleFormElement: FormElement = {
         subtitle: subtitle || "Fill out the form below",
       },
     });
-    
+
     function onSubmit(values: FormSchemaType) {
       updateElement(values);
     }
-    
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -933,7 +992,7 @@ const TitleFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="subtitle"
@@ -947,8 +1006,10 @@ const TitleFormElement: FormElement = {
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full">Update properties</Button>
+
+          <Button type="submit" className="w-full">
+            Update properties
+          </Button>
         </form>
       </Form>
     );

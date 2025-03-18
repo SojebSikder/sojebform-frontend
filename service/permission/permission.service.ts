@@ -1,5 +1,5 @@
 import { CookieHelper } from "../../helper/cookie.helper";
-import { Fetch } from "../../util/Fetch";
+import { Fetch } from "../../lib/Fetch";
 
 const config = {
   headers: {

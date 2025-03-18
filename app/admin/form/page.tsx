@@ -111,7 +111,7 @@ export default function FormsPage() {
           <FileIcon className="h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-xl font-medium mb-2">No forms yet</h3>
           <p className="text-muted-foreground mb-4">Create your first form to get started</p>
-          <Link href="/">
+          <Link href="/form/create">
             <Button>Create Form</Button>
           </Link>
         </div>

@@ -1,19 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { ComponentSidebar } from "@/components/FormBuilder/component-sidebar";
 import { FormCanvas } from "@/components/FormBuilder/form-canvas";
 import { PropertiesPanel } from "@/components/FormBuilder/properties-panel";
-import { FormElement, FormElementInstance } from "@/components/FormBuilder/form-elements";
+import {
+  FormElement,
+  FormElementInstance,
+} from "@/components/FormBuilder/form-elements";
 import { createPortal } from "react-dom";
 import { ElementPreview } from "@/components/FormBuilder/element-preview";
 import { nanoid } from "nanoid";
 import { Button } from "@/components/FormBuilder/ui/button";
 import { SaveIcon, Trash2Icon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/FormBuilder/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/FormBuilder/ui/dialog";
 import { Label } from "@/components/FormBuilder/ui/label";
 import { Input } from "@/components/FormBuilder/ui/input";
 import { Textarea } from "@/components/FormBuilder/ui/textarea";
@@ -21,8 +40,11 @@ import { createForm } from "@/lib/api";
 
 export function FormBuilder() {
   const [elements, setElements] = useState<FormElementInstance[]>([]);
-  const [selectedElement, setSelectedElement] = useState<FormElementInstance | null>(null);
-  const [draggedElement, setDraggedElement] = useState<FormElement | null>(null);
+  const [selectedElement, setSelectedElement] =
+    useState<FormElementInstance | null>(null);
+  const [draggedElement, setDraggedElement] = useState<FormElement | null>(
+    null
+  );
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [formName, setFormName] = useState("My Form");
   const [formDescription, setFormDescription] = useState("");
@@ -45,8 +67,11 @@ export function FormBuilder() {
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
-    const activeData = active.data.current as { isNew?: boolean; element?: FormElement };
-    
+    const activeData = active.data.current as {
+      isNew?: boolean;
+      element?: FormElement;
+    };
+
     if (activeData?.isNew && activeData.element) {
       setDraggedElement(activeData.element);
     }
@@ -54,30 +79,33 @@ export function FormBuilder() {
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    
+
     if (!over || !active.data.current) {
       setDraggedElement(null);
       return;
     }
-    
-    const activeData = active.data.current as { isNew?: boolean; element?: FormElement };
-    
+
+    const activeData = active.data.current as {
+      isNew?: boolean;
+      element?: FormElement;
+    };
+
     if (activeData?.isNew && activeData.element && over.id === "canvas") {
       const newElement: FormElementInstance = {
         id: nanoid(),
         type: activeData.element.type,
         extraAttributes: activeData.element.construct(),
       };
-      
+
       setElements((prev) => [...prev, newElement]);
       setSelectedElement(newElement);
     }
-    
+
     setDraggedElement(null);
   }
 
   function updateElement(id: string, attributes: any) {
-    setElements((prev) => 
+    setElements((prev) =>
       prev.map((element) => {
         if (element.id === id) {
           return {
@@ -130,17 +158,19 @@ export function FormBuilder() {
   async function handleSaveForm() {
     try {
       setIsSaving(true);
-      
+
       const formData = {
         name: formName,
         description: formDescription,
         elements: elements,
       };
-      
+
+      console.log("formData", formData);
+
       const savedForm = await createForm(formData);
-      
+
       setSaveDialogOpen(false);
-      
+
       toast({
         title: "Form saved successfully",
         description: `Your form "${savedForm.name}" has been saved.`,
@@ -159,10 +189,10 @@ export function FormBuilder() {
 
   function clearForm() {
     if (elements.length === 0) return;
-    
+
     setElements([]);
     setSelectedElement(null);
-    
+
     toast({
       title: "Form cleared",
       description: "All elements have been removed from the form.",
@@ -181,17 +211,17 @@ export function FormBuilder() {
           <div className="container mx-auto px-4 py-3 flex justify-between items-center">
             <h1 className="text-2xl font-bold">Form Builder</h1>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={clearForm}
                 className="flex items-center gap-1"
               >
                 <Trash2Icon className="h-4 w-4" />
                 Clear
               </Button>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 onClick={saveForm}
                 className="flex items-center gap-1"
               >
@@ -201,26 +231,26 @@ export function FormBuilder() {
             </div>
           </div>
         </header>
-        
+
         <div className="flex flex-1 overflow-hidden">
           <ComponentSidebar />
-          
+
           <div className="flex-1 overflow-auto bg-muted/40">
-            <FormCanvas 
-              elements={elements} 
+            <FormCanvas
+              elements={elements}
               selectedElement={selectedElement}
               setSelectedElement={setSelectedElement}
               removeElement={removeElement}
             />
           </div>
-          
-          <PropertiesPanel 
+
+          <PropertiesPanel
             selectedElement={selectedElement}
             updateElement={updateElement}
           />
         </div>
       </div>
-      
+
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -229,47 +259,51 @@ export function FormBuilder() {
               Enter a name and description for your form.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <Label htmlFor="form-name">Form Name</Label>
-              <Input 
-                id="form-name" 
-                value={formName} 
-                onChange={(e) => setFormName(e.target.value)} 
+              <Input
+                id="form-name"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
                 placeholder="My Form"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="form-description">Description (optional)</Label>
-              <Textarea 
-                id="form-description" 
-                value={formDescription} 
-                onChange={(e) => setFormDescription(e.target.value)} 
+              <Textarea
+                id="form-description"
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
                 placeholder="Enter a description for your form"
                 rows={3}
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveForm} disabled={!formName.trim() || isSaving}>
+            <Button
+              onClick={handleSaveForm}
+              disabled={!formName.trim() || isSaving}
+            >
               {isSaving ? "Saving..." : "Save Form"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      {typeof document !== 'undefined' && createPortal(
-        <DragOverlay>
-          {draggedElement && <ElementPreview element={draggedElement} />}
-        </DragOverlay>,
-        document.body
-      )}
+
+      {typeof document !== "undefined" &&
+        createPortal(
+          <DragOverlay>
+            {draggedElement && <ElementPreview element={draggedElement} />}
+          </DragOverlay>,
+          document.body
+        )}
     </DndContext>
   );
 }

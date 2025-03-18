@@ -37,6 +37,7 @@ import { Label } from "@/components/FormBuilder/ui/label";
 import { Input } from "@/components/FormBuilder/ui/input";
 import { Textarea } from "@/components/FormBuilder/ui/textarea";
 import { createForm } from "@/lib/api";
+import { FormService } from "@/service/admin/form/form.service";
 
 export function FormBuilder() {
   const [elements, setElements] = useState<FormElementInstance[]>([]);
@@ -167,13 +168,14 @@ export function FormBuilder() {
 
       console.log("formData", formData);
 
-      const savedForm = await createForm(formData);
+      // const savedForm = await createForm(formData);
+      const createForm = await FormService.create(formData);
 
       setSaveDialogOpen(false);
 
       toast({
         title: "Form saved successfully",
-        description: `Your form "${savedForm.name}" has been saved.`,
+        description: `Your form "${formData.name}" has been saved.`,
       });
     } catch (error) {
       console.error("Error saving form:", error);

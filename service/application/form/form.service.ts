@@ -29,6 +29,7 @@ export const FormService = {
       },
     };
 
-    return await Fetch.get(`/form/${id}`, _config);
+    const response = await Fetch.get(`/form/${id}`, _config);
+    return response.data;
   },
 };

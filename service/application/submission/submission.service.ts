@@ -1,6 +1,7 @@
 import { ApiResponse, ApiResponseStatus } from "@/service/common/types";
 import { CookieHelper } from "../../../helper/cookie.helper";
 import { Fetch } from "../../../lib/Fetch";
+import { FormData } from "../form/form.service";
 
 const config = {
   headers: {
@@ -17,7 +18,10 @@ export interface SubmissionData {
 }
 
 export const SubmissionService = {
-  create: async (formData: FormData): Promise<ApiResponseStatus> => {
+  create: async (formData: {
+    form_id: string;
+    data: any;
+  }): Promise<ApiResponseStatus> => {
     const userToken = CookieHelper.get({ key: "token" });
 
     const _config = {

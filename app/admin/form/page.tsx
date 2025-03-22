@@ -184,7 +184,7 @@ export default function FormsPage() {
                   </Button>
                   {form.status && (
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/form/${form.id}/view`}>
+                      <Link href={`/form/${form.id}`}>
                         <EyeIcon className="h-4 w-4 mr-1" />
                         View
                       </Link>

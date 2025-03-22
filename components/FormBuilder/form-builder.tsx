@@ -37,17 +37,30 @@ import { Label } from "@/components/FormBuilder/ui/label";
 import { Input } from "@/components/FormBuilder/ui/input";
 import { Textarea } from "@/components/FormBuilder/ui/textarea";
 import { FormService } from "@/service/admin/form/form.service";
+import { ApiResponseStatus } from "@/service/common/types";
 
-export function FormBuilder() {
-  const [elements, setElements] = useState<FormElementInstance[]>([]);
+export function FormBuilder({
+  formId = null,
+  name = null,
+  description = null,
+  defaultElements = [],
+}: {
+  formId?: string;
+  name?: string;
+  description?: string;
+  defaultElements?: FormElementInstance[];
+}) {
+  const [elements, setElements] = useState<FormElementInstance[]>(
+    defaultElements || []
+  );
   const [selectedElement, setSelectedElement] =
     useState<FormElementInstance | null>(null);
   const [draggedElement, setDraggedElement] = useState<FormElement | null>(
     null
   );
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [formName, setFormName] = useState("My Form");
-  const [formDescription, setFormDescription] = useState("");
+  const [formName, setFormName] = useState(name || "My Form");
+  const [formDescription, setFormDescription] = useState(description || "");
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
@@ -165,16 +178,19 @@ export function FormBuilder() {
         elements: elements,
       };
 
-      console.log("formData", formData);
+      let response: ApiResponseStatus;
 
-      // const savedForm = await createForm(formData);
-      const createForm = await FormService.create(formData);
+      if (formId) {
+        response = await FormService.update(formId, formData);
+      } else {
+        response = await FormService.create(formData);
+      }
 
       setSaveDialogOpen(false);
 
       toast({
-        title: "Form saved successfully",
-        description: `Your form "${formData.name}" has been saved.`,
+        title: response.message,
+        description: response.message,
       });
     } catch (error) {
       console.error("Error saving form:", error);

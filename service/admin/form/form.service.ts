@@ -42,8 +42,8 @@ export const FormService = {
         Authorization: "Bearer " + userToken,
       },
     };
-
-    return await Fetch.get(`/admin/form/${id}`, _config);
+    const response = await Fetch.get(`/admin/form/${id}`, _config);
+    return response.data;
   },
 
   create: async (formData: FormData): Promise<ApiResponseStatus> => {
@@ -56,7 +56,8 @@ export const FormService = {
       },
     };
 
-    return await Fetch.post(`/admin/form`, formData, _config);
+    const response = await Fetch.post(`/admin/form`, formData, _config);
+    return response;
   },
 
   update: async (

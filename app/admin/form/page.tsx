@@ -177,14 +177,14 @@ export default function FormsPage() {
               <CardFooter className="flex justify-between pt-2">
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/forms/${form.id}`}>
+                    <Link href={`/admin/form/create?form_id=${form.id}`}>
                       <PencilIcon className="h-4 w-4 mr-1" />
                       Edit
                     </Link>
                   </Button>
                   {form.status && (
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/forms/${form.id}/view`}>
+                      <Link href={`/form/${form.id}/view`}>
                         <EyeIcon className="h-4 w-4 mr-1" />
                         View
                       </Link>

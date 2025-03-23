@@ -24,32 +24,32 @@ export default function FormView() {
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, any>>({});
 
-  useEffect(() => {
-    async function loadForm() {
-      try {
-        const formData = await FormService.findOne(params.id as string);
-        if (!formData.data.status) {
-          toast({
-            title: "Form not available",
-            description: "This form is not published yet.",
-            variant: "destructive",
-          });
-          router.push("/");
-          return;
-        }
-        setForm(formData);
-      } catch (error) {
-        console.error("Error loading form:", error);
+  async function loadForm() {
+    try {
+      const formData = await FormService.findOne(params.id as string);
+      if (!formData.data.status) {
         toast({
-          title: "Error loading form",
-          description: "There was an error loading the form. Please try again.",
+          title: "Form not available",
+          description: "This form is not published yet.",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        router.push("/");
+        return;
       }
+      setForm(formData.data);
+    } catch (error) {
+      console.error("Error loading form:", error);
+      toast({
+        title: "Error loading form",
+        description: "There was an error loading the form. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     loadForm();
   }, [params.id, router, toast]);
 
@@ -158,32 +158,33 @@ export default function FormView() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {form.elements.map((element: FormElementInstance) => {
-            const FormComponent = FormElements[element.type].formComponent;
+          {form.elements &&
+            form.elements.map((element: FormElementInstance) => {
+              const FormComponent = FormElements[element.type].formComponent;
 
-            if (!FormComponent) {
-              return null;
-            }
+              if (!FormComponent) {
+                return null;
+              }
 
-            return (
-              <div
-                key={element.id}
-                className={cn(
-                  "p-4 border rounded-lg bg-background",
-                  element.type === "Title" && "border-none p-0 bg-transparent"
-                )}
-              >
-                <FormComponent
-                  elementInstance={element}
-                  isSubmission={true}
-                  defaultValue={formData[element.id]}
-                  onValueChange={(value) =>
-                    handleInputChange(element.id, value)
-                  }
-                />
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={element.id}
+                  className={cn(
+                    "p-4 border rounded-lg bg-background",
+                    element.type === "Title" && "border-none p-0 bg-transparent"
+                  )}
+                >
+                  <FormComponent
+                    elementInstance={element}
+                    isSubmission={true}
+                    defaultValue={formData[element.id]}
+                    onValueChange={(value) =>
+                      handleInputChange(element.id, value)
+                    }
+                  />
+                </div>
+              );
+            })}
 
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "Submitting..." : "Submit Form"}

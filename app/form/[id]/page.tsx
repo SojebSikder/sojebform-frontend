@@ -27,10 +27,10 @@ export default function FormView() {
   async function loadForm() {
     try {
       const formData = await FormService.findOne(params.id as string);
-      if (!formData.data.status) {
+      if (!formData.success) {
         toast({
-          title: "Form not available",
-          description: "This form is not published yet.",
+          title: formData.message,
+          description: formData.message,
           variant: "destructive",
         });
         router.push("/");
@@ -90,9 +90,6 @@ export default function FormView() {
 
       // Clear form data
       setFormData({});
-
-      // Optional: Redirect to a thank you page or back to home
-      router.push("/");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({

@@ -33,9 +33,9 @@ export default async function Home({
         </header>
         <FormBuilder
           formId={formId}
-          name={form.data.name}
-          description={form.data.description}
-          defaultElements={form.data.elements}
+          name={form.data && form.data.name}
+          description={form.data && form.data.description}
+          defaultElements={form.data && form.data.elements}
         />
       </main>
     </div>

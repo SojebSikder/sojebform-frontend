@@ -40,7 +40,7 @@ import { FormService } from "@/service/admin/form/form.service";
 import { ApiResponseStatus } from "@/service/common/types";
 
 export function FormBuilder({
-  formId = null,
+  formId,
   name = null,
   description = null,
   defaultElements = [],
@@ -180,10 +180,10 @@ export function FormBuilder({
 
       let response: ApiResponseStatus;
 
-      if (formId) {
-        response = await FormService.update(formId, formData);
-      } else {
+      if (formId == "undefined") {
         response = await FormService.create(formData);
+      } else {
+        response = await FormService.update(formId, formData);
       }
 
       setSaveDialogOpen(false);

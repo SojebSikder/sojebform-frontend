@@ -74,7 +74,7 @@ const TextFieldFormElement: FormElement = {
   }),
   label: "Text Field",
   icon: TextIcon,
-  formComponent: ({ elementInstance }) => {
+  formComponent: ({ elementInstance, ...props }) => {
     const { label, placeholder, helper_text, required } =
       elementInstance.extra_attributes || {};
 
@@ -84,7 +84,7 @@ const TextFieldFormElement: FormElement = {
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
-        <Input placeholder={placeholder} />
+        <Input {...props} placeholder={placeholder} />
         {helper_text && (
           <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}
@@ -203,7 +203,7 @@ const TextareaFormElement: FormElement = {
   }),
   label: "Textarea",
   icon: FileTextIcon,
-  formComponent: ({ elementInstance }) => {
+  formComponent: ({ elementInstance, ...props }) => {
     const { label, placeholder, helper_text, required, rows } =
       elementInstance.extra_attributes || {};
 
@@ -213,7 +213,7 @@ const TextareaFormElement: FormElement = {
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
-        <Textarea placeholder={placeholder} rows={rows || 3} />
+        <Textarea placeholder={placeholder} rows={rows || 3} {...props} />
         {helper_text && (
           <p className="text-sm text-muted-foreground">{helper_text}</p>
         )}

@@ -178,8 +178,8 @@ export default function FormView() {
                     elementInstance={element}
                     isSubmission={true}
                     defaultValue={formData[element.id]}
-                    onValueChange={(value) =>
-                      handleInputChange(element.id, value)
+                    onChange={(e) =>
+                      handleInputChange(element.id, e.target.value)
                     }
                   />
                 </div>

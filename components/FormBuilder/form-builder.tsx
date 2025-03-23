@@ -181,9 +181,11 @@ export function FormBuilder({
       let response: ApiResponseStatus;
 
       if (formId == "undefined") {
-        response = await FormService.create(formData);
+        const formService = await FormService.create(formData);
+        response = formService;
       } else {
-        response = await FormService.update(formId, formData);
+        const formService = await FormService.update(formId, formData);
+        response = formService;
       }
 
       setSaveDialogOpen(false);

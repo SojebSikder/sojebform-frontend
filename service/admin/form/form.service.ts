@@ -57,7 +57,7 @@ export const FormService = {
     };
 
     const response = await Fetch.post(`/admin/form`, formData, _config);
-    return response;
+    return response.data;
   },
 
   update: async (
@@ -73,7 +73,8 @@ export const FormService = {
       },
     };
 
-    return await Fetch.patch(`/admin/form/${id}`, formData, _config);
+    const response = await Fetch.patch(`/admin/form/${id}`, formData, _config);
+    return response.data;
   },
 
   toggleStatus: async (id: string): Promise<any> => {

@@ -33,13 +33,12 @@ export const UserService = {
     return await Fetch.post("/auth/register", data, config);
   },
 
-  logout: (context = null) => {
-    CookieHelper.destroy({ key: "token", context });
+  logout: () => {
+    CookieHelper.destroy("token", {});
   },
   // get user details
-  getUserDetails: async ({ token = "", context = null }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token;
+  getUserDetails: async () => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -48,11 +47,12 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/user/me`, _config);
+    const response = await Fetch.get(`/user/me`, _config);
+    return response.data;
   },
 
-  findAll: async (context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  findAll: async () => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -64,8 +64,8 @@ export const UserService = {
     return await Fetch.get(`/user`, _config);
   },
 
-  findOne: async (id: number, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  findOne: async (id: number) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -77,17 +77,8 @@ export const UserService = {
     return await Fetch.get(`/user/${id}`, _config);
   },
 
-  findOneByUsername: async ({
-    username,
-    token = "",
-    context = null,
-  }: {
-    username: string;
-    token?: string;
-    context?: any;
-  }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token || CookieHelper.get({ key: "token", context });
+  findOneByUsername: async ({ username }: { username: string }) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -99,39 +90,36 @@ export const UserService = {
     return await Fetch.get(`/user/profile/${username}`, _config);
   },
 
-  update: async (
-    {
-      fname,
-      lname,
-      date_of_birth,
-      city,
-      country,
-      organization,
-      recipient_name,
-      recipient_zip_code,
-      recipient_country,
-      recipient_state,
-      recipient_city,
-      recipient_address,
-      recipient_phone_number,
-    }: {
-      fname: string;
-      lname: string;
-      date_of_birth: string;
-      city: string;
-      country: string;
-      organization: string;
-      recipient_name: string;
-      recipient_zip_code: string;
-      recipient_country: string;
-      recipient_state: string;
-      recipient_city: string;
-      recipient_address: string;
-      recipient_phone_number: string;
-    },
-    context = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  update: async ({
+    fname,
+    lname,
+    date_of_birth,
+    city,
+    country,
+    organization,
+    recipient_name,
+    recipient_zip_code,
+    recipient_country,
+    recipient_state,
+    recipient_city,
+    recipient_address,
+    recipient_phone_number,
+  }: {
+    fname: string;
+    lname: string;
+    date_of_birth: string;
+    city: string;
+    country: string;
+    organization: string;
+    recipient_name: string;
+    recipient_zip_code: string;
+    recipient_country: string;
+    recipient_state: string;
+    recipient_city: string;
+    recipient_address: string;
+    recipient_phone_number: string;
+  }) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -159,8 +147,8 @@ export const UserService = {
     return await Fetch.patch(`/user`, data, _config);
   },
 
-  updateAvatar: async (data: any, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  updateAvatar: async (data: any) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -174,23 +162,20 @@ export const UserService = {
   },
 
   //
-  create: async (
-    {
-      fname,
-      lname,
-      username,
-      email,
-      role_id,
-    }: {
-      fname: string;
-      lname: string;
-      username: string;
-      email: string;
-      role_id: number;
-    },
-    context: any = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  create: async ({
+    fname,
+    lname,
+    username,
+    email,
+    role_id,
+  }: {
+    fname: string;
+    lname: string;
+    username: string;
+    email: string;
+    role_id: number;
+  }) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {
@@ -210,16 +195,18 @@ export const UserService = {
   },
 
   // TODO
-  confirm: async (
-    {
-      id,
-      token,
-      email,
-      password,
-    }: { id: number; token: string; email: string; password: string },
-    context: any = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  confirm: async ({
+    id,
+    token,
+    email,
+    password,
+  }: {
+    id: number;
+    token: string;
+    email: string;
+    password: string;
+  }) => {
+    const userToken = CookieHelper.get("token");
 
     const _config = {
       headers: {

@@ -1,4 +1,4 @@
-import nookies, { parseCookies } from "nookies";
+import { cookies } from "next/headers";
 
 /**
  * Cookie helper
@@ -7,49 +7,47 @@ export class CookieHelper {
   /**
    * set cookie
    */
-  static set({
-    key,
-    value,
-    context = null,
-    expires = 30 * 24 * 60 * 60,
-    path = "/",
-  }: {
-    key: any;
-    value: any;
-    context?: any;
-    expires?: number;
-    path?: string;
-  }) {
-    nookies.set(context, key, value, {
-      maxAge: expires,
+  static async set(
+    key: string,
+    value: string,
+    {
+      expires = 30 * 24 * 60 * 60,
+      path = "/",
+    }: {
+      expires?: number;
+      path?: string;
+    }
+  ) {
+    const cookie = await cookies();
+    cookie.set(key, value, {
+      httpOnly: true,
+      secure: true,
       path: path,
+      maxAge: expires,
     });
   }
 
   /**
    * get cookie
-   * @param {*}
-   * @returns
    */
-  static get({ key, context = null }: { key: any; context?: any }) {
-    const cookiesParse = parseCookies(context);
-    return cookiesParse[key];
+  static async get(key: string) {
+    const cookie = await cookies();
+    const value = cookie.get(key)?.value;
+    return value;
   }
 
   /**
    * Destroy cookie
    */
-  static destroy({
-    key,
-    context = null,
-    path = "/",
-  }: {
-    key: any;
-    context?: any;
-    path?: string;
-  }) {
-    nookies.destroy(context, key, {
-      path: path, // THE KEY IS TO SET THE SAME PATH
-    });
+  static async destroy(
+    key: string,
+    {
+      path = "/",
+    }: {
+      path?: string;
+    }
+  ) {
+    const cookie = await cookies();
+    cookie.delete(key);
   }
 }

@@ -134,7 +134,7 @@ export default function FormsPage() {
     <div className="container mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Your Forms</h1>
-        <Link href="/admin/form/create">
+        <Link href="/dashboard/form/create">
           <Button>Create New Form</Button>
         </Link>
       </div>
@@ -146,7 +146,7 @@ export default function FormsPage() {
           <p className="text-muted-foreground mb-4">
             Create your first form to get started
           </p>
-          <Link href="/admin/form/create">
+          <Link href="/dashboard/form/create">
             <Button>Create Form</Button>
           </Link>
         </div>
@@ -177,7 +177,7 @@ export default function FormsPage() {
               <CardFooter className="flex justify-between pt-2">
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/admin/form/create?form_id=${form.id}`}>
+                    <Link href={`/dashboard/form/create?form_id=${form.id}`}>
                       <PencilIcon className="h-4 w-4 mr-1" />
                       Edit
                     </Link>
